@@ -1,7 +1,7 @@
 #include "main.h"
 
 /**
- * add_varble_lst_node - a custom ftn that adds a variable node at the end of linked list
+ * add_varble_lst_node - a csto ftn that adds variable node at end of linked list
  * @hddr: the head node of the varble_lst linked list.
  * @varlgnt: variable length
  * @vlu: user input value

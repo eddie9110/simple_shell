@@ -1,6 +1,50 @@
 #include "main.h"
 
 /**
+ * cstmcd_drctry - a custom ftn that changes current directory
+ * @dat: user's input
+ * Return: 1
+ */
+
+int cstmcd_drctry(cstmdata *dat)
+{
+	int hmme;
+	char *drctry;
+	int hmmedir, hmmedir0;
+
+	drctry = dat->args[1];
+
+	if (drctry != NULL)
+	{
+		hmmedir = cstmftn_str_cmp("$HOME", drctry);
+		hmmedir0 = cstmftn_str_cmp("~", drctry);
+		hmme = cstmftn_str_cmp("--", drctry);
+	}
+
+	if (!hmmedir || !hmme || !hmmedir0 || drctry == NULL)
+	{
+		cstmcd_home(dat);
+		return (1);
+	}
+
+	if (cstmftn_str_cmp("-", drctry) == 0)
+	{
+		cstmcd_prev(dat);
+		return (1);
+	}
+
+	if (cstmftn_str_cmp("..", drctry) == 0 || cstmftn_str_cmp(".", drctry) == 0)
+	{
+		cd_parent_drctry(dat);
+		return (1);
+	}
+
+	cstmcd(dat);
+
+	return (1);
+}
+
+/**
  * cd_parent_drctry - a ftn that changes to the parent directory
  * @dat: data relevant (environ)
  * Return: void
@@ -8,7 +52,7 @@
 
 void cd_parent_drctry(cstmdata *dat)
 {
-	char*cpds;
+	char *cpds;
 	char pwd[PATH_MAX];
 	char *cpwd, *drctry;
 
@@ -36,7 +80,6 @@ void cd_parent_drctry(cstmdata *dat)
 	if (cpwd != NULL)
 	{
 		cpwd = ftnstr_tokn(NULL, "\0");
-
 		if (cpwd != NULL)
 			cstmstr_reverser(cpwd);
 	}
@@ -51,7 +94,6 @@ void cd_parent_drctry(cstmdata *dat)
 		cstm_set_env("PWD", "/", dat);
 	}
 	dat->status = 0;
-
 	free(cpds);
 }
 
@@ -63,10 +105,10 @@ void cd_parent_drctry(cstmdata *dat)
 
 void cstmcd(cstmdata *dat)
 {
+	char pwd[PATH_MAX];
 	char *drctry, *cpds, *cdir;
-	char pd[PATH_MAX];
 
-	getcwd(pd, sizeof(pd));
+	getcwd(pwd, sizeof(pwd));
 
 	drctry = dat->args[1];
 
@@ -76,7 +118,7 @@ void cstmcd(cstmdata *dat)
 		return;
 	}
 
-	cpds = cstmstr_dup(pd);
+	cpds = cstmstr_dup(pwd);
 	cstm_set_env("OLDPWD", cpds, dat);
 
 	cdir = cstmstr_dup(drctry);
